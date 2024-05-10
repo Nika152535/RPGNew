@@ -9,11 +9,12 @@ using namespace std;
 
 //TODO: Check the circular dependency
 int getRolledAttack(int attack) {
-    int lowerLimit = attack * .80;
+    int lowerLimit = attack * .75;
     return (rand() % (attack - lowerLimit)) + lowerLimit;
 }
 
-Enemy::Enemy(char* name, int health, int attack, int defense, int speed) : Character(name, health, attack, defense, speed, false) {
+Enemy::Enemy(char name[], int health, int attack, int defense, int speed, int Expex):
+Character(name, health, attack, defense, speed, Expex, false) {
 }
 
 void Enemy::doAttack(Character *target) {
@@ -26,6 +27,7 @@ void Enemy::takeDamage(int damage) {
     setHealth(getHealth() - damage);
     if(getHealth() <= 0) {
         cout<<getName()<<"---Stage clean... you defeat the enemy---"<<endl;
+        cout << "\n-- " << getName() << Expex << " Exp -- " << endl;
     }
     else {
         cout<<getName()<<" has taken " << damage << " damage" << endl;
@@ -57,5 +59,11 @@ Action Enemy::takeAction(vector<Player *> player) {
     };
 
     return myAction;
+}
+void Enemy::ActEstadisticas() {
+    setHealth(getHealth() + 10);
+    setAttack(getAttack() + 5);
+    setDefense(getDefense() + 5);
+    setSpeed(getSpeed() + 5);
 }
 
