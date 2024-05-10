@@ -13,11 +13,12 @@ class Player;
 
 class Enemy: public Character {
 public:
-    Enemy(char*, int, int, int, int);
+    Enemy(char*, int, int, int, int, int);
     void doAttack(Character *target) override;
     void takeDamage(int damage) override;
     Character* getTarget(vector<Player*> teamMembers);
     Action takeAction(vector<Player*> player);
+    void ActEstadisticas();
 };
 
 

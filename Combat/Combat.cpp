@@ -64,6 +64,19 @@ void Combat::doCombat() {
     }
 }
 
+void Combat::checkParticipantStatus(Character* participant) {
+	if (participant->getHealth() <= 0) {
+		if (participant->getIsPlayer()) {
+			teamMembers.erase(remove(teamMembers.begin(), teamMembers.end(), participant), teamMembers.end());
+		}
+		else {
+			enemies.erase(remove(enemies.begin(), enemies.end(), participant), enemies.end());
+            gainExpex(participant); //Si el enemigo se murio ganar la xp
+		}
+		participants.erase(remove(participants.begin(), participants.end(), participant), participants.end());
+	}
+}
+
 void Combat::registerActions() {
     vector<Character*>::iterator participant = participants.begin();
     //Una iteracion por turno de cada participante (player y enemigo)
@@ -86,44 +99,22 @@ void Combat::executeActions() {
     while(!actions.empty()) {
         Action currentAction = actions.top();
         currentAction.action();
-        checkForFlee(currentAction.subscriber);
         checkParticipantStatus(currentAction.subscriber);
         checkParticipantStatus(currentAction.target);
         actions.pop();
     }
 }
 
-void Combat::checkParticipantStatus(Character* participant) {
-    if(participant->getHealth() <= 0) {
-        if(participant->getIsPlayer()) {
-            teamMembers.erase(remove(teamMembers.begin(), teamMembers.end(), participant), teamMembers.end());
-        }
-        else {
-            enemies.erase(remove(enemies.begin(), enemies.end(), participant), enemies.end());
-        }
-        participants.erase(remove(participants.begin(), participants.end(), participant), participants.end());
-    }
-}
+void Combat::gainExpex(Character* participant) {
+    int exp = 0;
+    exp = participant->getExpex();
 
-void Combat::checkForFlee(Character *character) {
-    bool fleed = character->hasFleed();
-    if(fleed) {
-        if(character->getIsPlayer()) {
-            cout<<"---You have fled the combat like a rat---"<<endl;
-            teamMembers.erase(remove(teamMembers.begin(), teamMembers.end(), character), teamMembers.end());
+	teamMembers[0]->gainExperience(exp);
+    if (teamMembers[0]->SubirNivel()) {
+        for (int i = 0; i < enemies.size(); ++i) {
+            if (enemies[i] != participant) {
+                enemies[i]->ActEstadisticas();
+            }
         }
-        else {
-            cout<<character->getName()<<"---has fled the combat like a rat---"<<endl;
-            enemies.erase(remove(enemies.begin(), enemies.end(), character), enemies.end());
-        }
-        participants.erase(remove(participants.begin(), participants.end(), character), participants.end());
     }
-}
-
-string Combat::participantsToString() {
-    string result = "";
-    for (int i = 0; i < participants.size(); i++) {
-        result += participants[i]->toString() + "\n";
-    }
-    return result;
 }

@@ -13,24 +13,26 @@ bool compareSpeed(Enemy *a, Enemy *b) {
     return a->getSpeed() > b->getSpeed();
 }
 
-Player::Player(char* name, int health, int attack, int defense, int speed) : Character(name, health, attack, defense,
-                                                                                        speed, true) {
-    experience = 75;
-    level = 4;
+Player::Player(char name[], int health, int attack, int defense, int speed) : Character(name, health, attack, defense, speed, Expex, true) {
+    experience = 0;
+    level = 1;
 }
 
-Player::Player(char* _name, int _health, int _attack, int _defense, int _speed, bool _isPlayer, int _experience, int _level): Character(_name, _health, _attack, _defense,
-                                                                                                                                        _speed, _isPlayer) {
+Player::Player(char name[], int _health, int _attack, int _defense, int _speed, int _Expex, bool _isPlayer, int _experience, int _level): Character
+(name, health, attack, defense, speed, Expex, true) {
     experience = _experience;
     level = _level;
 }
 
-
-void Player::doAttack(Character *target) {
+void Player::doAttack(Character* target) {
     int rolledAttack = getRolledAttack(getAttack());
     int trueDamage = target->getDefense() > rolledAttack ? 0 : rolledAttack - target->getDefense();
     target->takeDamage(trueDamage);
+    if (target->getHealth() <= 0) {
+        gainExperience(target->getExpex());
+    }
 }
+
 
 void Player::takeDamage(int damage) {
     setHealth(health - damage);
@@ -66,13 +68,15 @@ void Player::levelUp() {
     setAttack(getAttack() + 5);
     setDefense(getDefense() + 5);
     setSpeed(getSpeed() + 5);
+    cout << "LEVEL UP!!!" << level << endl;
+    cout << "Your new level is: " << level << endl;
+    experience -= 100;
 }
 
 void Player::gainExperience(int exp) {
     experience += exp;
     if (experience >= 100) {
         levelUp();
-        experience = 0;
     }
 }
 
@@ -124,68 +128,75 @@ Action Player::takeAction(vector<Enemy *> enemies) {
 
     return myAction;
 }
-char* Player::serialize() {
-    char* iterator = buffer;
-
-    memcpy(iterator, &name, sizeof name);
-    iterator += sizeof name;
-
-    memcpy(iterator, &health, sizeof health);
-    iterator += sizeof health;
-
-    memcpy(iterator, &attack, sizeof attack);
-    iterator += sizeof attack;
-
-    memcpy(iterator, &defense, sizeof defense);
-    iterator += sizeof defense;
-
-    memcpy(iterator, &speed, sizeof speed);
-    iterator += sizeof speed;
-
-    memcpy(iterator, &isPlayer, sizeof isPlayer);
-    iterator += sizeof isPlayer;
-
-    memcpy(iterator, &experience, sizeof experience);
-    iterator += sizeof experience;
-
-    memcpy(iterator, &level, sizeof level);
-
-    return buffer;
+bool Player::SubirNivel()
+{
+    bool tmp = haSubidoNivel;
+    haSubidoNivel = false;
+    return tmp;
 }
 
-Player* Player::unserialize(char* _buffer) {
-    char* iterator = _buffer;
-    char _name[30];
-    int _health;
-    int _attack;
-    int _defense;
-    int _speed;
-    bool _isPlayer;
-    int _experience;
-    int _level;
+// char* Player::serialize() {
+//     char* iterator = buffer;
 
-    memcpy(&_name, iterator, sizeof _name);
-    iterator += sizeof _name;
+//     memcpy(iterator, &name, sizeof name);
+//     iterator += sizeof name;
 
-    memcpy(&_health, iterator, sizeof _health);
-    iterator += sizeof _health;
+//     memcpy(iterator, &health, sizeof health);
+//     iterator += sizeof health;
 
-    memcpy(&_attack, iterator, sizeof _attack);
-    iterator += sizeof _attack;
+//     memcpy(iterator, &attack, sizeof attack);
+//     iterator += sizeof attack;
 
-    memcpy(&_defense, iterator, sizeof _defense);
-    iterator += sizeof _defense;
+//     memcpy(iterator, &defense, sizeof defense);
+//     iterator += sizeof defense;
 
-    memcpy(&_speed, iterator, sizeof _speed);
-    iterator += sizeof _speed;
+//     memcpy(iterator, &speed, sizeof speed);
+//     iterator += sizeof speed;
 
-    memcpy(&_isPlayer, iterator, sizeof _isPlayer);
-    iterator += sizeof _isPlayer;
+//     memcpy(iterator, &isPlayer, sizeof isPlayer);
+//     iterator += sizeof isPlayer;
 
-    memcpy(&_experience, iterator, sizeof _experience);
-    iterator += sizeof _experience;
+//     memcpy(iterator, &experience, sizeof experience);
+//     iterator += sizeof experience;
 
-    memcpy(&_level, iterator, sizeof _level);
+//     memcpy(iterator, &level, sizeof level);
 
-    return new Player(_name, _health, _attack, _defense, _speed, _isPlayer, _experience, _level);
-}
+//     return buffer;
+// }
+
+// Player* Player::unserialize(char* _buffer) {
+//     char* iterator = _buffer;
+//     char _name[30];
+//     int _health;
+//     int _attack;
+//     int _defense;
+//     int _speed;
+//     bool _isPlayer;
+//     int _experience;
+//     int _level;
+
+//     memcpy(&_name, iterator, sizeof _name);
+//     iterator += sizeof _name;
+
+//     memcpy(&_health, iterator, sizeof _health);
+//     iterator += sizeof _health;
+
+//     memcpy(&_attack, iterator, sizeof _attack);
+//     iterator += sizeof _attack;
+
+//     memcpy(&_defense, iterator, sizeof _defense);
+//     iterator += sizeof _defense;
+
+//     memcpy(&_speed, iterator, sizeof _speed);
+//     iterator += sizeof _speed;
+
+//     memcpy(&_isPlayer, iterator, sizeof _isPlayer);
+//     iterator += sizeof _isPlayer;
+
+//     memcpy(&_experience, iterator, sizeof _experience);
+//     iterator += sizeof _experience;
+
+//     memcpy(&_level, iterator, sizeof _level);
+
+//     return new Player(_name, _health, _attack, _defense, _speed, _isPlayer, _experience, _level);
+// }

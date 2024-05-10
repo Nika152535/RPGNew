@@ -2,14 +2,17 @@
 // Created by Victor Navarro on 13/02/24.
 //
 #include "Character.h"
+#include <string>
+#include <sstream>
 
-Character::Character(char* _name, int _health, int _attack, int _defense, int _speed, bool _isPlayer) {
+Character::Character(char* _name, int _health, int _attack, int _defense, int _speed, int _Expex, bool _isPlayer) {
     strcpy(name, _name);
     health = _health;
     attack = _attack;
     defense = _defense;
     speed = _speed;
     isPlayer = _isPlayer;
+    Expex = _Expex;
     fleed = false;
 }
 
@@ -63,4 +66,10 @@ bool Character::getIsPlayer() {
 
 bool Character::hasFleed() {
     return fleed;
+}
+int Character::getExpex() {
+    return Expex;
+}
+void Character::setExpex(int _Expex) {
+    Expex = _Expex;
 }
